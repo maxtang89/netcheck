@@ -1,0 +1,4 @@
+api_key: "your_api_key"
+allowed_ips:
+  - "192.168.0.0/16"
+port: 8080

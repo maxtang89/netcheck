@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+speedtest-cli
+pyyaml
+dnspython
+ipaddress
