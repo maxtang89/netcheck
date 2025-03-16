@@ -22,8 +22,13 @@ NetCheck is a lightweight network diagnostic tool that provides an API for check
     git clone https://github.com/maxtang89/netcheck.git
     cd netcheck
     ```
-2. Run the installation script:
+2. Edit the configuration:
+     ```sh
+    vi config.yaml
+    ```
+3. Run the installation script:
     ```sh
+    sudo chmod 775 ./install.sh
     sudo ./install.sh
     ```
     This script will:

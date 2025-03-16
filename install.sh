@@ -53,7 +53,7 @@ After=network.target
 
 [Service]
 ExecStart=$(realpath $VENV_DIR)/bin/uvicorn netcheck:app --host 0.0.0.0 --port $PORT
-WorkingDirectory=$(realpath $VENV_DIR)
+WorkingDirectory=$(realpath .)
 Restart=always
 RestartSec=0
 User=$EXEC_USER
