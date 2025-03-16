@@ -71,20 +71,20 @@ curl "http://server-ip:8080/ping?host=google.com&count=5&timeout=2&format=json&a
 #### **Example Response:**
 ```json
 {
-  "host": "nac",
-  "data": {
-    "host": "google.com",
-    "protocol": "icmp",
-    "count": 5,
-    "warmup": 0,
-    "timeout": 2,
-    "min": 9,
-    "max": 9,
-    "avg": 9,
-    "loss": 20,
-    "raw": [null, 9.46, 9.34, 9.33, 9.28],
-    "brackets": [9, 9, 9, 20]
-  },
+    "host": "xxx",
+    "data": {
+        "host": "google.com",
+        "protocol": "icmp",
+        "count": 5,
+        "warmup": 0,
+        "timeout": 2,
+        "min": 8,
+        "max": 48,
+        "avg": 16,
+        "loss": 0,
+        "raw": [48.67, 9.05, 9.03, 8.78, 9.3],
+        "brackets": [8, 16, 48, 0]
+    }
 }
 ```
 
@@ -111,8 +111,15 @@ curl "http://server-ip:8080/speed?format=json&api_key=your_api_key"
 #### **Example Response:**
 ```json
 {
-  "download": 95,
-  "upload": 20
+    "host": "xxx",
+    "data": {
+        "download": 1635,
+        "upload": 1682,
+        "brackets": [
+            1682,
+            1635
+        ]
+    }
 }
 ```
 
@@ -140,9 +147,21 @@ curl "http://server-ip:8080/traceroute?target=8.8.8.8&format=json&api_key=your_a
 #### **Example Response:**
 ```json
 {
-  "result": [
-    "raw traceout output (split by lines)"
-  ]
+    "host": "xxx",
+    "data": {
+        "result": [
+            "traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets",
+            " 1  xxx.xxx.xxx.xxx  0.773 ms  0.813 ms  0.835 ms",
+            " 2  xxx.xxx.xxx.xxx  1.384 ms  1.525 ms  1.632 ms",
+            " 3  xxx.xxx.xxx.xxx  1.241 ms  1.448 ms  1.397 ms",
+            " 4  xxx.xxx.xxx.xxx  2.440 ms  2.494 ms  2.419 ms",
+            " 5  xxx.xxx.xxx.xxx  3.412 ms  3.918 ms  3.399 ms",
+            " 6  xxx.xxx.xxx.xxx  3.292 ms  3.138 ms  3.153 ms",
+            " 7  xxx.xxx.xxx.xxx  3.695 ms  3.778 ms  3.786 ms",
+            " 8  * * *",
+            " 9  8.8.8.8  3.630 ms  3.564 ms  3.550 ms"
+        ]
+    }
 }
 ```
 
@@ -170,8 +189,13 @@ curl "http://server-ip:8080/dns?domain=google.com&format=json&api_key=your_api_k
 #### **Example Response:**
 ```json
 {
-  "domain": "google.com",
-  "records": ["8.8.8.8", "8.8.4.4"]
+    "host": "xxx",
+    "data": {
+        "domain": "google.com",
+        "records": [
+            "142.250.66.78"
+        ]
+    }
 }
 ```
 
