@@ -152,6 +152,7 @@ def speed():
         return {
             "download": download_speed,
             "upload": upload_speed,
+            "raw": spd.results.dict(),
             "brackets": [upload_speed, download_speed]
         }
     except Exception as e:
