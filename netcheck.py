@@ -148,12 +148,13 @@ def speed():
         spd.get_best_server()
         download_speed = int((spd.download() / 1_000_000))
         upload_speed = int((spd.upload() / 1_000_000))
-
+        ping = int(spd.results.ping)
         return {
             "download": download_speed,
             "upload": upload_speed,
+            "ping": ping,
             "raw": spd.results.dict(),
-            "brackets": [upload_speed, download_speed]
+            "brackets": [upload_speed, download_speed, ping]
         }
     except Exception as e:
         return {"error": str(e)}
