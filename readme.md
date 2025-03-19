@@ -15,7 +15,9 @@ NetCheck is a lightweight network diagnostic tool that provides an API for check
 - Ubuntu/Debian-based system
 - Python 3.10+
 - `traceroute` and `iperf3` installed (for full functionality)
-
+```bash
+sudo apt install traceroute -y && sudo apt install iperf3 -y
+```
 ### Steps
 1. Clone the repository:
     ```sh
