@@ -267,3 +267,58 @@ def get_dns(domain: str, api_key : str = "", format: str = "json", request: Requ
     if not is_ip_allowed(request.client.host) or (API_KEY and api_key != API_KEY):
         return format_response({"error": "Forbidden"}, format)
     return format_response({"host": HOST_NAME, "data": dns_lookup(domain)}, format)
+
+def check_nmap_permission():
+    """Check if the current user has permission to run Nmap OS detection."""
+    if shutil.which("nmap") is None:
+        return False
+    try:
+        test_command = ["nmap", "-O", "-F", "127.0.0.1"]
+        output = subprocess.check_output(test_command, timeout=5).decode(decode_type)
+        if "requires root" in output or "Insufficient privileges" in output:
+            return False
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+def nmap_get_os(target):
+    """Perform an Nmap OS detection scan on the target."""
+    if shutil.which("nmap") is None:
+        return {"error": "nmap is not installed on this system."}
+    if not check_nmap_permission():
+        return {"error": "Insufficient permissions to run Nmap OS detection"}
+    try:
+        command = ["nmap", "-O", "-T4", target]
+        output = subprocess.check_output(command, timeout=30).decode(decode_type)
+        return {"result": output}
+    except subprocess.CalledProcessError as e:
+        return {"error": str(e)}
+    except subprocess.TimeoutExpired:
+        return {"error": "Nmap scan timed out"}
+    
+@app.get("/nmap/getOS")
+def get_nmap_os(target: str, api_key : str = "", request: Request = None):
+    if not is_ip_allowed(request.client.host) or (API_KEY and api_key != API_KEY):
+        return format_response({"error": "Forbidden"})
+    return format_response({"host": HOST_NAME, "data": nmap_get_os(target)})
+
+def nmap_port_scan(target):
+    """Perform an Nmap port scan on the target."""
+    if shutil.which("nmap") is None:
+        return {"error": "nmap is not installed on this system."}
+    if not check_nmap_permission():
+        return {"error": "Insufficient permissions to run Nmap OS detection"}
+    try:
+        command = ["nmap", "-sS", "-Pn", "-T4", target]
+        output = subprocess.check_output(command, timeout=30).decode(decode_type)
+        return {"result": output}
+    except subprocess.CalledProcessError as e:
+        return {"error": str(e)}
+    except subprocess.TimeoutExpired:
+        return {"error": "Nmap scan timed out"}
+    
+@app.get("/nmap/portScan")
+def get_nmap_port_scan(target: str, api_key : str = "", format: str = "json", request: Request = None):
+    if not is_ip_allowed(request.client.host) or (API_KEY and api_key != API_KEY):
+        return format_response({"error": "Forbidden"})
+    return format_response({"host": HOST_NAME, "data": nmap_port_scan(target)})

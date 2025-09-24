@@ -16,7 +16,7 @@ NetCheck is a lightweight network diagnostic tool that provides an API for check
 - Python 3.10+
 - `traceroute` and `iperf3` installed (for full functionality)
 ```bash
-sudo apt install traceroute -y && sudo apt install iperf3 -y
+sudo apt install traceroute -y && sudo apt install iperf3 -y && sudo apt install nmap -y
 ```
 ### Steps
 1. Clone the repository:
@@ -37,7 +37,11 @@ sudo apt install traceroute -y && sudo apt install iperf3 -y
     - Create a Python virtual environment.
     - Install required dependencies from `requirements.txt`.
     - Configure and start NetCheck as a systemd service.
-
+4. ** Uninstall** :
+    ```sh
+        sudo chmod 775 ./uninstall.sh
+        sudo ./uninstall.sh
+    ```
 ## Configuration
 NetCheck uses a YAML configuration file (`config.yaml`) for settings:
 ```yaml
@@ -250,9 +254,36 @@ curl "http://server-ip:8080/iperf/stop?format=json&api_key=your_api_key"
 }
 ```
 
+
 ---
 
-### **6. Health Check**
+### **6. Nmap**
+NetCheck provides **OS detection** and **Port scan** APIs powered by `nmap`.  
+
+#### **OS Detection**
+```
+GET /nmap/getOS
+```
+#### **Parameters:**
+| Parameter  | Type   | Required | Description |
+|------------|--------|----------|------------|
+| `target`   | string | ✅ Yes   | Target hostname or IP (e.g., `google.com`, `8.8.8.8`) |
+| `api_key`  | string | ❌ No   | API key for authentication (if required) |
+
+
+#### **Port Scan**
+```
+GET /nmap/portScan
+```
+| Parameter  | Type   | Required | Description |
+|------------|--------|----------|------------|
+| `target`   | string | ✅ Yes   | Target hostname or IP (e.g., `google.com`, `8.8.8.8`) |
+| `api_key`  | string | ❌ No   | API key for authentication (if required) |
+
+
+---
+
+### **7. Health Check**
 Check if the NetCheck service is running.
 
 #### **Endpoint:**
@@ -285,6 +316,7 @@ sudo systemctl stop netcheck
 sudo systemctl restart netcheck
 sudo systemctl status netcheck
 ```
+
 
 ## License
 This project is licensed under the MIT License.

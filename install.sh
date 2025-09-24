@@ -56,7 +56,7 @@ ExecStart=$(realpath $VENV_DIR)/bin/uvicorn netcheck:app --host 0.0.0.0 --port $
 WorkingDirectory=$(realpath .)
 Restart=always
 RestartSec=0
-User=$EXEC_USER
+User=root
 
 [Install]
 WantedBy=multi-user.target
