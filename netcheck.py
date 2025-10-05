@@ -9,9 +9,13 @@ import dns.resolver
 import yaml
 import ipaddress
 import threading
+import shutil
+import re
+
+
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
-import shutil
+from typing import Optional
 
 CONFIG_PATH = "./config.yaml"
 
@@ -289,6 +293,7 @@ def nmap_get_os(target):
         return {"error": "Insufficient permissions to run Nmap OS detection"}
     try:
         command = ["nmap", "-O", "-T4", target]
+        print(f"Running command: {' '.join(command)}")
         output = subprocess.check_output(command, timeout=30).decode(decode_type)
         return {"result": output}
     except subprocess.CalledProcessError as e:
@@ -302,15 +307,30 @@ def get_nmap_os(target: str, api_key : str = "", request: Request = None):
         return format_response({"error": "Forbidden"})
     return format_response({"host": HOST_NAME, "data": nmap_get_os(target)})
 
-def nmap_port_scan(target):
-    """Perform an Nmap port scan on the target."""
+def nmap_port_scan(target: str, ports: Optional[str] = None, top_ports: Optional[int] = 100):
     if shutil.which("nmap") is None:
         return {"error": "nmap is not installed on this system."}
     if not check_nmap_permission():
         return {"error": "Insufficient permissions to run Nmap OS detection"}
+
+    cmd = ["nmap", "-sS", "-Pn", "-T4", target]
+
+    if ports:
+        if not isinstance(ports, str) or not re.fullmatch(r'[0-9,-]+', ports):
+            return {"error": "invalid ports format"}
+        cmd.extend(["-p", ports])
+    elif top_ports is not None:
+        try:
+            tp = int(top_ports)
+            if tp <= 0 or tp > 65535:
+                return {"error": "invalid top_ports value"}
+        except (ValueError, TypeError):
+            return {"error": "top_ports must be integer"}
+        cmd.extend(["--top-ports", str(tp)])
+
     try:
-        command = ["nmap", "-sS", "-Pn", "-T4", target]
-        output = subprocess.check_output(command, timeout=30).decode(decode_type)
+        print(f"Running command: {' '.join(cmd)}") 
+        output = subprocess.check_output(cmd, timeout=60).decode(decode_type, errors="replace")
         return {"result": output}
     except subprocess.CalledProcessError as e:
         return {"error": str(e)}
@@ -318,7 +338,14 @@ def nmap_port_scan(target):
         return {"error": "Nmap scan timed out"}
     
 @app.get("/nmap/portScan")
-def get_nmap_port_scan(target: str, api_key : str = "", format: str = "json", request: Request = None):
+def get_nmap_port_scan(
+    target: str,
+    api_key: str = "",
+    ports: Optional[str] = None,
+    top_ports: Optional[int] = 100,
+    request: Request = None
+):
     if not is_ip_allowed(request.client.host) or (API_KEY and api_key != API_KEY):
         return format_response({"error": "Forbidden"})
-    return format_response({"host": HOST_NAME, "data": nmap_port_scan(target)})
+    result = nmap_port_scan(target, ports=ports, top_ports=top_ports)
+    return format_response({"host": HOST_NAME, "data": result})

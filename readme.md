@@ -278,6 +278,8 @@ GET /nmap/portScan
 | Parameter  | Type   | Required | Description |
 |------------|--------|----------|------------|
 | `target`   | string | ✅ Yes   | Target hostname or IP (e.g., `google.com`, `8.8.8.8`) |
+| `ports`    | string | ❌ No   | |
+| `top_ports`| number | ❌ No   | |
 | `api_key`  | string | ❌ No   | API key for authentication (if required) |
 
 
